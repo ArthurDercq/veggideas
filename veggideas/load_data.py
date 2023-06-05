@@ -1,6 +1,9 @@
 import tensorflow as tf
+import os
 
-data_dir ="/Users/arthurdercq/code/ArthurDercq/veggideas/raw_data"
+
+
+data_dir = LOCAL_DATA_PATH
 batch_size = 32
 image_size = (224, 224)
 
