@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-data_dir ="/Users/arthurdercq/code/ArthurDercq/veggideas/raw_data"
+data_dir ="/Users/lieselvranckx/code/ArthurDercq/veggideas/raw_data"
 batch_size = 32
 image_size = (224, 224)
 
