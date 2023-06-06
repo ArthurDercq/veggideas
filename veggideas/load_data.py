@@ -1,6 +1,9 @@
 import tensorflow as tf
+from veggideas.params import *
 
-data_dir ="/Users/lieselvranckx/code/ArthurDercq/veggideas/raw_data"
+
+
+data_dir = LOCAL_DATA_PATH
 batch_size = 32
 image_size = (224, 224)
 
@@ -17,10 +20,10 @@ def load_train_data():
     seed=42)
 
     print("Loading training data")
+    print("Training data successfully loaded ✅")
     return train_data
 
 load_train_data()
-print("Training data successfully loaded ✅")
 
 
 def load_val_data():
