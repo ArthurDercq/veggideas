@@ -70,4 +70,4 @@ def add_last_layers(model):
 model_transfer = add_last_layers(model_transfer)
 
 
-model_transfer.fit(train_data, batch_size=32, epochs=1)
+model_transfer.fit(train_data, batch_size=32, epochs=1, validation_data=val_data)
