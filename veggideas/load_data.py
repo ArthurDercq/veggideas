@@ -23,7 +23,7 @@ def load_train_data():
     print("Training data successfully loaded ✅")
     return train_data
 
-load_train_data()
+train_data = load_train_data()
 
 
 def load_val_data():
@@ -37,7 +37,10 @@ def load_val_data():
     seed=42)
 
     print("Loading validation data")
+    print("Validation data successfully loaded ✅")
     return val_data
+
+val_data = load_val_data()
 
 def load_test_data():
     test_data = tf.keras.utils.image_dataset_from_directory(
@@ -50,4 +53,7 @@ def load_test_data():
     seed=42)
 
     print("Loading test data")
+    print("Testing data successfully loaded ✅")
     return test_data
+
+test_data = load_test_data()
