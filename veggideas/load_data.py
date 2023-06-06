@@ -1,5 +1,5 @@
 import tensorflow as tf
-import os
+from veggideas.params import *
 
 
 
@@ -20,10 +20,10 @@ def load_train_data():
     seed=42)
 
     print("Loading training data")
+    print("Training data successfully loaded ✅")
     return train_data
 
 load_train_data()
-print("Training data successfully loaded ✅")
 
 
 def load_val_data():

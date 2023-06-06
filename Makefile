@@ -19,6 +19,9 @@ clean:
 test_structure:
 	@bash tests/test_structure.sh
 
+load_data:
+	@python veggideas/load_data.py
+
 #======================#
 #          API         #
 #======================#
