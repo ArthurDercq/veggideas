@@ -28,7 +28,7 @@ train_data = load_train_data()
 
 def load_val_data():
     val_data = tf.keras.utils.image_dataset_from_directory(
-    data_dir+'/val',
+    data_dir+'/validation',
     batch_size=batch_size,
     image_size=image_size,
     labels='inferred',
