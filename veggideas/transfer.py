@@ -4,8 +4,7 @@ from keras import layers, models, regularizers
 from keras import optimizers
 import tensorflow as tf
 
-train_data = load_train_data()
-val_data = load_val_data()
+
 
 
 def load_model():
@@ -13,10 +12,7 @@ def load_model():
     model = VGG16(weights="imagenet", include_top=False, input_shape=(224,224,3))
     return model
 
-model_transfer = load_model()
-model_transfer.summary()
-
-
+#model_transfer.summary()
 
 
 def set_nontrainable_layers(model):
@@ -24,9 +20,7 @@ def set_nontrainable_layers(model):
     model.trainable = False
     return model
 
-model_transfer = set_nontrainable_layers(model_transfer)
-model_transfer.summary()
-
+#model_transfer.summary()
 
 
 def add_last_layers(model):
@@ -67,7 +61,21 @@ def add_last_layers(model):
     return model
 
 
+#load data
+train_data = load_train_data()
+val_data = load_val_data()
+
+#transfer VGG16
+model_transfer = load_model()
+
+model_transfer = set_nontrainable_layers(model_transfer)
+
+#add our own layers
 model_transfer = add_last_layers(model_transfer)
 
+print("Starting to train the model")
 
+#train the final model
 model_transfer.fit(train_data, batch_size=32, epochs=1, validation_data=val_data)
+
+print("model trained")
