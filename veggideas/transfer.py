@@ -4,8 +4,7 @@ from keras import layers, models, regularizers
 from keras import optimizers
 import tensorflow as tf
 
-train_data = load_train_data()
-val_data = load_val_data()
+
 
 
 def load_non_trainable_model():
@@ -53,9 +52,19 @@ def add_last_layers(model):
                   metrics=['accuracy'])
     return model
 
-
-
 def get_trained():
     model = add_last_layers()
     model.fit(train_data, batch_size=32, epochs=1, validation_data=val_data)
     return model
+
+
+#load data
+train_data = load_train_data()
+val_data = load_val_data()
+
+print("Starting to train the model")
+
+#train the final model
+history = get_trained()
+
+print("model trained")
