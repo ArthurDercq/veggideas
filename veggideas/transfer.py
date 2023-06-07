@@ -15,7 +15,7 @@ def load_non_trainable_model():
 
 
 
-def add_last_layers(model):
+def add_last_layers():
     '''Take a pre-trained model, set its parameters as non-trainable, and add additional trainable layers on top'''
     resize_and_rescale = tf.keras.Sequential([
         layers.Rescaling(1./255)])
