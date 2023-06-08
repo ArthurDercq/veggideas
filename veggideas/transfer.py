@@ -61,10 +61,5 @@ if __name__ == '__main__':
     #load data
     train_data = load_train_data()
     val_data = load_val_data()
-
-    print("Starting to train the model")
-
-    #train the final model
     history = get_trained()
 
-    print("model trained")
