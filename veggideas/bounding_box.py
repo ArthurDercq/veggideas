@@ -96,3 +96,7 @@ def building_the_model():
     model_transfer.fit(augmented_train_data, batch_size=32, epochs=10, validation_data=val_data)
 
     return model_transfer
+
+
+if __name__ == '__main__':
+    model = building_the_model()
