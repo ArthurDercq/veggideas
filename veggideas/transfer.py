@@ -62,9 +62,12 @@ def get_trained():
 train_data = load_train_data()
 val_data = load_val_data()
 
-print("Starting to train the model")
 
-#train the final model
-history = get_trained()
 
-print("model trained")
+if __name__ == "__main__" :
+    print("Starting to train the model")
+
+    #train the final model
+    history = get_trained()
+
+    print("model trained")
