@@ -25,6 +25,9 @@ load_data:
 run_model:
 	@python veggideas/transfer.py
 
+run_bounding_boxes:
+	@pyhton veggideas/bounding_box.py
+
 #======================#
 #          API         #
 #======================#
