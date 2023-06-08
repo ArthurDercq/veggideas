@@ -14,7 +14,6 @@ def load_non_trainable_model():
     return model
 
 
-
 def add_last_layers():
     '''Take a pre-trained model, set its parameters as non-trainable, and add additional trainable layers on top'''
     resize_and_rescale = tf.keras.Sequential([
@@ -52,19 +51,20 @@ def add_last_layers():
                   metrics=['accuracy'])
     return model
 
+
 def get_trained():
     model = add_last_layers()
     model.fit(train_data, batch_size=32, epochs=1, validation_data=val_data)
     return model
 
+if __name__ == '__main__':
+    #load data
+    train_data = load_train_data()
+    val_data = load_val_data()
 
-#load data
-train_data = load_train_data()
-val_data = load_val_data()
+    print("Starting to train the model")
 
-print("Starting to train the model")
+    #train the final model
+    history = get_trained()
 
-#train the final model
-history = get_trained()
-
-print("model trained")
+    print("model trained")
