@@ -5,8 +5,6 @@ from keras import optimizers
 import tensorflow as tf
 
 
-
-
 def load_non_trainable_model():
 
     model = VGG16(weights="imagenet", include_top=False, input_shape=(224,224,3))
@@ -62,4 +60,3 @@ if __name__ == '__main__':
     train_data = load_train_data()
     val_data = load_val_data()
     history = get_trained()
-
