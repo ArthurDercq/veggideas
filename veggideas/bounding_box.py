@@ -98,4 +98,5 @@ def building_the_model():
     return model_transfer
 
 
-def bounding_box():
+if __name__ == '__main__':
+    model = building_the_model()
