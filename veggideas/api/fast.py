@@ -5,6 +5,7 @@ import tensorflow as tf
 from veggideas.recipes import get_recipes
 import cv2
 import numpy as np
+from veggideas.registry import load_model
 
 #uvicorn veggideas.api.fast:app
 app = FastAPI()
@@ -17,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.state.model= tf.keras.models.load_model('models/my_model.h5')
+app.state.model= load_model()
 
 @app.get("/")
 def root():
@@ -28,6 +29,11 @@ def root():
 
 @app.post('/predict')
 async def receive_image(img: UploadFile=File(...)):
+
+    vegg_list = ['Bean', 'Bitter_Gourd', 'Bottle_Gourd', 'Brinjal', 'Broccoli',
+                 'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Cucumber',
+                 'Papaya', 'Potato', 'Pumpkin', 'Radish', 'Tomato']
+
     ### Receiving and decoding the image
     contents = await img.read()
 
@@ -39,9 +45,12 @@ async def receive_image(img: UploadFile=File(...)):
     preds_classes = np.argmax(prediction, axis=-1)[0]
     #LABELS
 
+    temp_dict = dict(zip(preds_classes, vegg_list))
+    final_prediction = temp_dict[1]
+
     #vegetable_type = get_predicted_vegetable(prediction)
 
-    return {"prediction": preds_classes}
+    return {"prediction": final_prediction}
 
 
 

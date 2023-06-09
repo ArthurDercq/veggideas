@@ -1,17 +1,25 @@
-from veggideas.load_data import load_train_data, load_val_data
-from keras.applications.vgg16 import VGG16
+from veggideas.load_data import load_train_data, load_val_data, load_test_data
+from keras.applications import VGG16, InceptionV3
+from veggideas.registry import save_model
 from keras import layers, models, regularizers
-from keras import optimizers
+from keras import optimizers, callbacks
 import tensorflow as tf
 import pandas as pd
+import numpy as np
 
 
-def load_non_trainable_model():
+def load_model_VGG16():
 
     model = VGG16(weights="imagenet", include_top=False, input_shape=(224,224,3))
     model.trainable = False
     return model
 
+def load_model_Inception():
+
+    model = InceptionV3(weights="imagenet", include_top=False, input_shape=(224,224, 3))
+    model.trainable = False
+
+    return model
 
 def add_last_layers():
     '''Take a pre-trained model, set its parameters as non-trainable, and add additional trainable layers on top'''
@@ -23,7 +31,7 @@ def add_last_layers():
     layers.RandomRotation(0.2),
     ])
 
-    base_model = load_non_trainable_model()
+    base_model = load_model_Inception()
     flattening_layer = layers.Flatten()
     dense_layer = layers.Dense(128, activation='relu')
     dense_layer_2 = layers.Dense(64, activation='relu')
@@ -53,16 +61,45 @@ def add_last_layers():
 
 def get_trained():
     model = add_last_layers()
-    model.fit(train_data, batch_size=32, epochs=1, validation_data=val_data)
+
+    es = callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+
+    model.fit(train_data, batch_size=32, epochs=10, validation_data=val_data, callbacks=[es])
+
+    print("Model trained ✅")
     return model
 
+
+def evaluate_model(model):
+    test_data = load_test_data()
+    print("Evaluating model...")
+
+    if model is None:
+        print(f"\n❌ No model to evaluate")
+        return None
+
+    metrics = model.evaluate(test_data,
+        batch_size=32,
+        verbose=0,
+        return_dict=True)
+
+    loss = metrics["loss"]
+    accuracy = metrics["accuracy"]
+
+    print(f"✅ Model evaluated, ACCURACY: {round(accuracy, 2)}, LOSS: {loss}")
+
+
 if __name__ == '__main__':
-    #load data
+
     train_data = load_train_data()
     val_data = load_val_data()
+
+
     history = get_trained()
 
+    save_model(history)
+
+    evaluate_model(history)
 
     history_df = pd.DataFrame(history.history)
     print(history_df)
-
