@@ -41,7 +41,7 @@ def save_model(model: keras.Model = None) -> None:
 
 
 
-def load_model(stage="Production") -> keras.Model:
+def load_model() -> keras.Model:
     """
     Return a saved model:
     - locally (latest one in alphabetical order)
@@ -71,7 +71,6 @@ def load_model(stage="Production") -> keras.Model:
         return latest_model
 
     elif MODEL_TARGET == "gcs":
-        # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
         print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
 
         client = storage.Client()
@@ -98,7 +97,6 @@ def save_results(params: dict, metrics: dict) -> None:
     Persist params & metrics locally on the hard drive at
     "{LOCAL_REGISTRY_PATH}/params/{current_timestamp}.pickle"
     "{LOCAL_REGISTRY_PATH}/metrics/{current_timestamp}.pickle"
-    - (unit 03 only) if MODEL_TARGET='mlflow', also persist them on MLflow
     """
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
