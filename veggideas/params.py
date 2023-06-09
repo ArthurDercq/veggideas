@@ -1,5 +1,4 @@
 import os
-import numpy as np
 
 ##################  VARIABLES  ##################
 DATA_SIZE = os.environ.get("DATA_SIZE")
@@ -23,4 +22,4 @@ GCR_MEMORY = os.environ.get("GCR_MEMORY")
 
 ##################  CONSTANTS  #####################
 LOCAL_DATA_PATH = os.getenv('LOCAL_DATA_PATH')
-LOCAL_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), ".lewagon", "mlops", "training_outputs")
+LOCAL_REGISTRY_PATH =  os.getenv("LOCAL_REGISTRY_PATH")
