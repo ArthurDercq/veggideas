@@ -1,5 +1,5 @@
 from veggideas.load_data import load_train_data, load_val_data, load_test_data
-from keras.applications.vgg16 import VGG16
+from keras.applications import VGG16, InceptionV3
 from veggideas.registry import save_model
 from keras import layers, models, regularizers
 from keras import optimizers, callbacks
@@ -8,12 +8,18 @@ import pandas as pd
 import numpy as np
 
 
-def load_non_trainable_model():
+def load_model_VGG16():
 
     model = VGG16(weights="imagenet", include_top=False, input_shape=(224,224,3))
     model.trainable = False
     return model
 
+def load_model_Inception():
+
+    model = InceptionV3(weights="imagenet", include_top=False, input_shape=(224,224, 3))
+    model.trainable = False
+
+    return model
 
 def add_last_layers():
     '''Take a pre-trained model, set its parameters as non-trainable, and add additional trainable layers on top'''
@@ -25,7 +31,7 @@ def add_last_layers():
     layers.RandomRotation(0.2),
     ])
 
-    base_model = load_non_trainable_model()
+    base_model = load_model_Inception()
     flattening_layer = layers.Flatten()
     dense_layer = layers.Dense(128, activation='relu')
     dense_layer_2 = layers.Dense(64, activation='relu')
