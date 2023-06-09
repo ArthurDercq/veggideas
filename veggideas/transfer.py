@@ -3,6 +3,7 @@ from keras.applications.vgg16 import VGG16
 from keras import layers, models, regularizers
 from keras import optimizers
 import tensorflow as tf
+import pandas as pd
 
 
 def load_non_trainable_model():
@@ -60,3 +61,8 @@ if __name__ == '__main__':
     train_data = load_train_data()
     val_data = load_val_data()
     history = get_trained()
+
+
+    history_df = pd.DataFrame(history.history)
+    print(history_df)
+
