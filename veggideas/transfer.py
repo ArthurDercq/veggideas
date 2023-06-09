@@ -82,8 +82,6 @@ def evaluate_model(model):
 
     print(f"✅ Model evaluated, ACCURACY: {round(accuracy, 2)}, LOSS: {loss}")
 
-    model.evaluate(test_data, batchsize = 32)
-
 
 if __name__ == '__main__':
 

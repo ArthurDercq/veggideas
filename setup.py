@@ -12,7 +12,7 @@ if os.path.isfile('requirements_dev.txt'):
     requirements.extend([x.strip() for x in content if 'git+' not in x])
 
 
-setup(name='packagename',
+setup(name='veggideas',
       version="0.0.1",
       description="Project Description",
       packages=find_packages(),
