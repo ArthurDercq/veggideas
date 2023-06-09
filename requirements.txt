@@ -22,3 +22,4 @@ uvicorn
 
 opencv-python
 python-multipart
+colorama
