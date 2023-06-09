@@ -1,4 +1,4 @@
-from veggideas.load_data import load_train_data, load_val_data
+from veggideas.load_data import load_train_data, load_val_data, load_test_data
 from keras.applications.vgg16 import VGG16
 from veggideas.registry import save_model
 from keras import layers, models, regularizers
@@ -63,6 +63,28 @@ def get_trained():
     print("Model trained ✅")
     return model
 
+
+def evaluate_model(model):
+    test_data = load_test_data()
+    print("Evaluating model...")
+
+    if model is None:
+        print(f"\n❌ No model to evaluate")
+        return None
+
+    metrics = model.evaluate(test_data,
+        batch_size=32,
+        verbose=0,
+        return_dict=True)
+
+    loss = metrics["loss"]
+    accuracy = metrics["accuracy"]
+
+    print(f"✅ Model evaluated, ACCURACY: {round(accuracy, 2)}, LOSS: {loss}")
+
+    model.evaluate(test_data, batchsize = 32)
+
+
 if __name__ == '__main__':
 
     train_data = load_train_data()
@@ -72,6 +94,8 @@ if __name__ == '__main__':
     history = get_trained()
 
     save_model(history)
+
+    evaluate_model(history)
 
     history_df = pd.DataFrame(history.history)
     print(history_df)
