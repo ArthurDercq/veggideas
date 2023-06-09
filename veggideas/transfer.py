@@ -1,9 +1,11 @@
 from veggideas.load_data import load_train_data, load_val_data
 from keras.applications.vgg16 import VGG16
+from veggideas.registry import save_model
 from keras import layers, models, regularizers
 from keras import optimizers
 import tensorflow as tf
 import pandas as pd
+import numpy as np
 
 
 def load_non_trainable_model():
@@ -54,15 +56,19 @@ def add_last_layers():
 def get_trained():
     model = add_last_layers()
     model.fit(train_data, batch_size=32, epochs=1, validation_data=val_data)
+
+    print("Model trained ✅")
     return model
 
 if __name__ == '__main__':
     #load data
     train_data = load_train_data()
     val_data = load_val_data()
+
+
     history = get_trained()
 
+    save_model(history)
 
     history_df = pd.DataFrame(history.history)
     print(history_df)
-
