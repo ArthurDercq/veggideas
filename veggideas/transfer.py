@@ -6,8 +6,6 @@ import tensorflow as tf
 import pandas as pd
 
 
-
-
 def load_non_trainable_model():
 
     model = VGG16(weights="imagenet", include_top=False, input_shape=(224,224,3))
@@ -64,5 +62,7 @@ if __name__ == '__main__':
     val_data = load_val_data()
     history = get_trained()
 
+
     history_df = pd.DataFrame(history.history)
     print(history_df)
+
