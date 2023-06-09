@@ -14,18 +14,18 @@ FROM python:3.10.6-buster
 #      Or tensorflow to run on Apple Silicon (M1 / M2)
 # FROM armswdev/tensorflow-arm-neoverse:r22.11-tf-2.10.0-eigen
 
+COPY requirements.txt requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
 
 # Copy everything we need into the image
 # models models needs to go to a bucket
 COPY veggideas veggideas
-COPY requirements.txt requirements.txt
 COPY setup.py setup.py
-COPY .env .env
 COPY models models
 
 # Install everything
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
 RUN pip install .
 
 # Make directories that we need, but that are not included in the COPY
