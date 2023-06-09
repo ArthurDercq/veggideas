@@ -5,6 +5,7 @@ import tensorflow as tf
 from veggideas.recipes import get_recipes
 import cv2
 import numpy as np
+from veggideas.registry import load_model
 
 #uvicorn veggideas.api.fast:app
 app = FastAPI()
@@ -17,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.state.model= tf.keras.models.load_model()
+app.state.model= load_model()
 
 @app.get("/")
 def root():
