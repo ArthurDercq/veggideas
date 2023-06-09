@@ -53,10 +53,3 @@ def load_test_data():
     print("Loading test data")
     print("Testing data successfully loaded ✅")
     return test_data
-
-
-if __name__ == '__main__':
-
-    train_data = load_train_data()
-    val_data = load_val_data()
-    test_data = load_test_data()
