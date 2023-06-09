@@ -3,6 +3,7 @@ from keras.applications.vgg16 import VGG16
 from keras import layers, models, regularizers
 from keras import optimizers
 import tensorflow as tf
+import pandas as pd
 
 
 
@@ -63,3 +64,5 @@ if __name__ == '__main__':
     val_data = load_val_data()
     history = get_trained()
 
+    history_df = pd.DataFrame(history.history)
+    print(history_df)
