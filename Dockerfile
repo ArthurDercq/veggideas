@@ -23,7 +23,7 @@ RUN pip install -r requirements.txt
 # models models needs to go to a bucket
 COPY veggideas veggideas
 COPY setup.py setup.py
-COPY models models
+COPY credentials.json credentials.json
 
 # Install everything
 RUN pip install .

@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from veggideas.registry import load_model
 
-#uvicorn veggideas.api.fast:app
+# uvicorn veggideas.api.fast:app
 app = FastAPI()
 
 app.add_middleware(
@@ -40,7 +40,6 @@ async def receive_image(img: UploadFile=File(...)):
     nparr = np.fromstring(contents, np.uint8)
     cv2_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # type(cv2_img) => numpy.ndarray
     cv2_img = np.expand_dims(cv2_img, axis=0)
-    breakpoint()
     prediction = app.state.model.predict(cv2_img)
     preds_classes = np.argmax(prediction, axis=-1)[0]
     #LABELS
