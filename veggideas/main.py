@@ -38,4 +38,8 @@ if __name__ == '__main__':
 
     final_prediction = vegg_list[pred_class].lower()
 
-    get_recipes_details(10,final_prediction)
+    final_recipes = get_recipes_details(10,final_prediction)
+
+    print(f"You want to find recipes with {final_prediction} ? Here are some: ")
+
+    print(final_recipes)
