@@ -39,6 +39,6 @@ models/
 .credentials
 secrets.toml
 *.json
-
+credentials.json
 # User defined extras
 # Complete to your desire

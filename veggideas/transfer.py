@@ -62,7 +62,7 @@ def add_last_layers():
 def get_trained():
     model = add_last_layers()
 
-    es = callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+    es = callbacks.EarlyStopping(patience=1, restore_best_weights=True)
 
     model.fit(train_data, batch_size=32, epochs=10, validation_data=val_data, callbacks=[es])
 
@@ -100,6 +100,3 @@ if __name__ == '__main__':
     save_model(history)
 
     evaluate_model(history)
-
-    history_df = pd.DataFrame(history.history)
-    print(history_df)
