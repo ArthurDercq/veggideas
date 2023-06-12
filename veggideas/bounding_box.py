@@ -1,102 +1,96 @@
-import tensorflow as tf
-from keras.preprocessing.image import ImageDataGenerator
-import tensorflow as tf
-from veggideas.transfer import load_non_trainable_model
-from keras import regularizers, layers
-from keras import models
-from keras import optimizers
-from veggideas.load_data import load_train_data, load_val_data
+import cv2
+import selectivesearch
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import selectivesearch
 
 
+def draw_bboxes():
+    image_path = '/Users/arthurdercq/Desktop/eggplants.jpeg'
 
-train_data = load_train_data()
-val_data = load_val_data()
-base_model = load_non_trainable_model()
+    # Load the image
+    image = cv2.imread(image_path)
 
+    # Perform selective search to generate candidate regions
+    selective_search_results = selectivesearch.selective_search(image, scale=750, sigma=0.9, min_size=100)
 
-def data_augmentation():
-    datagen = ImageDataGenerator(
-        rotation_range=20,  # Rotate images by 20 degrees
-        width_shift_range=0.2,  # Shift images horizontally by 20% of the total width
-        height_shift_range=0.2,  # Shift images vertically by 20% of the total height
-        shear_range=0.2,  # Apply shear transformation with a shear intensity of 20%
-        zoom_range=0.2,  # Apply zoom transformation with a zoom range of 20%
-        horizontal_flip=True,  # Flip images horizontally
-        fill_mode='nearest'  # Fill newly created pixels during transformations with the nearest value
-    )
+    minimum_bounding_box_size = 100
+    maximum_aspect_ratio = 3
+    # Calculate target aspect ratio range (adjust as per your requirement)
+    target_aspect_ratio = 0.30
+    aspect_ratio_range = 0.30
 
-    # Create an empty list to store augmented images and labels
-    augmented_images = []
-    augmented_labels = []
+    selected_candidates = []
+    for i, candidate in enumerate(selective_search_results[1]):
+        x, y, w, h = candidate['rect']
 
-    # Iterate over each batch in the training dataset
-    for images, labels in train_data:
-        # Apply data augmentation to the batch
-        augmented_batch = datagen.flow(images, labels, batch_size=images.shape[0])
-        augmented_images.extend(augmented_batch[0][0])
-        augmented_labels.extend(augmented_batch[0][1])
+        # Calculate bounding box size and aspect ratio
+        bounding_box_size = w * h
+        aspect_ratio = max(w / h, h / w)
 
-    # Convert the augmented images and labels to TensorFlow tensors
-    augmented_images = tf.convert_to_tensor(augmented_images)
-    augmented_labels = tf.convert_to_tensor(augmented_labels)
-
-    # Create a new dataset using the augmented images and labels
-    augmented_train_data = tf.data.Dataset.from_tensor_slices((augmented_images, augmented_labels))
-
-    return augmented_train_data
+        # Exclude the bounding box of the whole picture
+        image_size = image.shape[0] * image.shape[1]
+        box_coverage = bounding_box_size / image_size
+        if box_coverage < 0.98 and bounding_box_size >= minimum_bounding_box_size and aspect_ratio <= maximum_aspect_ratio:
+            selected_candidates.append({'rect': (x, y, w, h), 'index': i})
 
 
+    # Function to calculate the coverage ratio between two bounding boxes
+    def calculate_coverage_ratio(box1, box2):
+        x1, y1, w1, h1 = box1
+        x2, y2, w2, h2 = box2
 
-""""
-BOUNDING BOX
+        intersection_x = max(x1, x2)
+        intersection_y = max(y1, y2)
+        intersection_w = min(x1 + w1, x2 + w2) - intersection_x
+        intersection_h = min(y1 + h1, y2 + h2) - intersection_y
 
-"""
+        intersection_area = max(0, intersection_w) * max(0, intersection_h)
+        box1_area = w1 * h1
+        box2_area = w2 * h2
 
+        return intersection_area / box1_area, box1_area, box2_area
 
-def building_the_model():
-    def add_last_layers(base_model):
-        '''Take a pre-trained model, set its parameters as non-trainable, and add additional trainable layers on top'''
-        resize_and_rescale = tf.keras.Sequential([
-            layers.Rescaling(1./255)])
+    # List to store the filtered bounding boxes
+    filtered_boxes = []
 
-        base_model = base_model
-        flattening_layer = layers.Flatten()
-        dense_layer = layers.Dense(128, activation=tf.keras.layers.LeakyReLU(alpha=0.1))
-        dense_layer_2 = layers.Dense(64, activation='relu')
-        reg_l2 = regularizers.L2(0.001)
-        dense_layer_reg = layers.Dense(128, activation='relu', bias_regularizer=reg_l2)
-        conv2D_256 = layers.Conv2D(512, 3, padding='same', activation='relu')
-        conv2D_512 = layers.Conv2D(512, 3, padding='same', activation='relu')
-        maxpool_layer = layers.MaxPool2D(pool_size=(2,2))
-        prediction_layer = layers.Dense(15, activation='softmax')
+    # Iterate through the selected bounding boxes
+    for i in range(len(selected_candidates)):
+        current_box = selected_candidates[i]['rect']
+        is_contained = False
 
-        model = models.Sequential([
-            resize_and_rescale,
-            base_model,
-            conv2D_256,
-            maxpool_layer,
-            conv2D_512,
-            maxpool_layer,
-            flattening_layer,
-            dense_layer,
-            dense_layer_reg,
-            dense_layer_2,
-            prediction_layer
-            ])
+        # Check if the coverage ratio of the current box is less than 90% of any other box
+        for j in range(len(selected_candidates)):
+            if i != j:
+                other_box = selected_candidates[j]['rect']
+                coverage_ratio, current_area, other_area = calculate_coverage_ratio(current_box, other_box)
+                if coverage_ratio >= 0.99:
+                    # The current box is contained within another box
+                    is_contained = True
+                    if current_area >= other_area:
+                        filtered_boxes.append(current_box)
+                    else:
+                        break
+        # If the current box is not contained, add it to the filtered list
+        if not is_contained:
+            filtered_boxes.append(current_box)
 
 
-        opt = optimizers.Adam(learning_rate=1e-5)
-        model.compile(loss='categorical_crossentropy',
-                    optimizer=opt,
-                    metrics=['accuracy'])
-        return model
+    unique_tuples = set(filtered_boxes)
+    filtered_list = list(unique_tuples)
 
-    augmented_train_data = data_augmentation()
-    model_transfer = add_last_layers(base_model)
-    model_transfer.fit(augmented_train_data, batch_size=32, epochs=10, validation_data=val_data)
+    list_subimages =[]
+    # Itérer sur les coordonnées filtrées
+    for coords in filtered_list:
 
-    return model_transfer
+        x, y, w, h = coords
 
+        # Extraire l'image à partir des coordonnées
+        cropped_image = image[y:y+h, x:x+w]
+
+        list_subimages.append(cropped_image)
+
+    return list_subimages
 
 if __name__ == '__main__':
-    model = building_the_model()
+    su_images = draw_bboxes()
