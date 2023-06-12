@@ -6,6 +6,7 @@ from veggideas.recipes import get_recipes
 import cv2
 import numpy as np
 from veggideas.registry import load_model
+from veggideas.recipes import get_recipes, get_recipes_details, make_requests
 
 #uvicorn veggideas.api.fast:app
 app = FastAPI()
@@ -50,7 +51,8 @@ async def receive_image(img: UploadFile=File(...)):
 
     #vegetable_type = get_predicted_vegetable(prediction)
 
-    return {"prediction": final_prediction}
+    df = get_recipes_details(10, final_prediction)
+    return df
 
 
 
