@@ -45,8 +45,8 @@ async def receive_image(img: UploadFile=File(...)):
     preds_classes = np.argmax(prediction, axis=-1)[0]
     #LABELS
 
-    temp_dict = dict(zip(preds_classes, vegg_list))
-    final_prediction = temp_dict[1]
+
+    final_prediction = vegg_list[preds_classes].lower()
 
     #vegetable_type = get_predicted_vegetable(prediction)
 
