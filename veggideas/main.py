@@ -5,12 +5,12 @@ from veggideas.registry import load_model
 from veggideas.recipes import get_recipes_details
 
 
-def preprocess_new_image():
+def preprocess_new_image(path):
 # Demande à l'utilisateur de sélectionner une image depuis l'ordinateur
     image_path = "/Users/arthurdercq/Desktop/pumpkin.jpeg"
 
-    # Charge l'image à l'aide de OpenCV
-    image = cv2.imread(image_path)
+    # Charge the imahe with OpenCV
+    image = cv2.imread(path)
     resized_image = cv2.resize(image, (224, 224))
     resized_image = np.expand_dims(resized_image, axis=0)
 
@@ -18,15 +18,15 @@ def preprocess_new_image():
 
     return resized_image
 
-new_image = preprocess_new_image()
-
 
 
 if __name__ == '__main__':
 
-    model = load_model()
+    image_path = input("Where is your image located? \n")
 
-    new_image = preprocess_new_image()
+    new_image = preprocess_new_image(image_path)
+
+    model = load_model()
 
     prediction = model.predict(new_image)
 
