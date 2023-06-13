@@ -31,7 +31,7 @@ def root():
 @app.post('/predict')
 async def receive_image(img: UploadFile=File(...)):
 
-    vegg_list = ['Bean', 'Bitter_Gourd', 'Bottle_Gourd', 'Brinjal', 'Broccoli',
+    vegg_list = ['Bean', 'Broccoli',
                  'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Cucumber',
                  'Papaya', 'Potato', 'Pumpkin', 'Radish', 'Tomato']
 
