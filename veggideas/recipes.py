@@ -1,5 +1,7 @@
 import requests
 import pandas as pd
+import re
+
 
 
 APP_ID = "785b538a"
