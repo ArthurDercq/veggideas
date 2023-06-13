@@ -23,3 +23,5 @@ uvicorn
 opencv-python
 python-multipart
 colorama
+selectivesearch
+opencv-python
