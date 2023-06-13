@@ -7,7 +7,6 @@ import numpy as np
 from veggideas.registry import load_model
 
 
-im_path = '/Users/arthurdercq/Desktop/capsicums.jpeg'
 
 def load_image(img_path):
 # Load the image
@@ -93,7 +92,7 @@ def create_bounding_boxes(image):
         x, y, w, h = coords
 
         #Put it in the right format for the model
-        cropped_image = coords[y:y+h, x:x+w]
+        cropped_image = image[y:y+h, x:x+w]
         resized_image = cv2.resize(cropped_image, (224, 224))
         final_image = np.expand_dims(resized_image, axis=0)
         list_subimages.append(final_image)
@@ -143,8 +142,14 @@ def predict_bboxes(subimages_list):
 
 if __name__ == '__main__':
 
+#'/Users/arthurdercq/Desktop/capsicums.jpeg'
+
+    im_path = input("Where is your image located? \n")
+
     image = load_image(im_path)
 
     subimages = create_bounding_boxes(image)
 
     final_predictions = predict_bboxes(subimages)
+
+    print(final_predictions)
