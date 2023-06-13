@@ -5,13 +5,12 @@ import matplotlib.patches as patches
 import selectivesearch
 import numpy as np
 from veggideas.registry import load_model
-
+import tensorflow as tf
 
 
 def load_image(img_path):
 # Load the image
-    image_path = img_path
-    image = cv2.imread(image_path)
+    image = tf.image.decode_image(tf.io.read_file(img_path))
     return image
 
 def create_bounding_boxes(image):
@@ -93,7 +92,7 @@ def create_bounding_boxes(image):
 
         #Put it in the right format for the model
         cropped_image = image[y:y+h, x:x+w]
-        resized_image = cv2.resize(cropped_image, (224, 224))
+        resized_image = tf.image.resize(cropped_image, (224, 224))
         final_image = np.expand_dims(resized_image, axis=0)
         list_subimages.append(final_image)
 
@@ -119,11 +118,9 @@ def create_bounding_boxes(image):
 
 def predict_bboxes(subimages_list):
 
-    vegg_list = ['Bean', 'Bitter_Gourd', 'Bottle_Gourd', 'Brinjal', 'Broccoli',
-                'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Cucumber',
-                'Papaya', 'Potato', 'Pumpkin', 'Radish', 'Tomato']
-
-    model = load_model()
+    vegg_list = ['Bean', 'Broccoli', 'Cabbage', 'Capsicum', 'Carrot',
+                 'Cauliflower', 'Cucumber','Papaya', 'Potato',
+                 'Pumpkin', 'Radish', 'Tomato']
 
     predictions = []
 
@@ -138,13 +135,24 @@ def predict_bboxes(subimages_list):
 
     return predictions
 
+def most_frequent(list):
+    counter = 0
+    num = list[0]
+
+    for i in list:
+        curr_frequency = list.count(i)
+        if(curr_frequency> counter):
+            counter = curr_frequency
+            num = i
+
+    return num
 
 
 if __name__ == '__main__':
 
-#'/Users/arthurdercq/Desktop/capsicums.jpeg'
-
     im_path = input("Where is your image located? \n")
+    model = load_model()
+
 
     image = load_image(im_path)
 
@@ -152,4 +160,4 @@ if __name__ == '__main__':
 
     final_predictions = predict_bboxes(subimages)
 
-    print(final_predictions)
+    print(most_frequent(final_predictions))
