@@ -52,6 +52,11 @@ def get_recipes_details(number_of_recipes, final_prediction):
         # Name of the recipe
         url = recipes["hits"][_]["recipe"]["url"]
         recipe_name = url.split("/")[-1]
+        recipe_name = re.sub(r'\d+-', '', recipe_name)  # Remove digits and dashes
+        recipe_name = recipe_name.replace('-', ' ').title()  # Capitalize words
+
+        if not recipe_name:  # Skip recipes without a name
+            continue
 
         # Recipe URL
         recipe_url = recipes["hits"][_]["recipe"]["url"]
@@ -65,7 +70,7 @@ def get_recipes_details(number_of_recipes, final_prediction):
         recipe_type_diet = recipes["hits"][_]["recipe"]["healthLabels"][:3]
 
         # Calories of the recipe
-        recipe_calories = recipes["hits"][_]["recipe"]["calories"]
+        recipe_calories = round(recipes["hits"][_]["recipe"]["calories"])
 
         # Append recipe details to the list
         recipe_details = {
