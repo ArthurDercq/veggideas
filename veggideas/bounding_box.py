@@ -151,10 +151,10 @@ def most_frequent(list):
 if __name__ == '__main__':
 
     im_path = input("Where is your image located? \n")
-    model = load_model()
-
 
     image = load_image(im_path)
+
+    model = load_model()
 
     subimages = create_bounding_boxes(image)
 
