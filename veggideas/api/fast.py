@@ -51,4 +51,4 @@ async def receive_image(img: UploadFile=File(...)):
     #vegetable_type = get_predicted_vegetable(prediction)
 
     df = get_recipes_details(10, final_prediction)
-    return df
+    return df.to_dict()

@@ -55,7 +55,7 @@ def get_recipes_details(number_of_recipes, final_prediction):
         url = recipes["hits"][_]["recipe"]["url"]
         recipe_name = url.split("/")[-1]
         recipe_name = re.sub(r'\d+-', '', recipe_name)  # Remove digits and dashes
-        recipe_name = recipe_name.replace('-', ' ').title()  # Capitalize words
+        recipe_name = recipe_name.replace('-', ' ').capitalize()  # Capitalize words
 
         if not recipe_name:  # Skip recipes without a name
             continue
@@ -64,9 +64,10 @@ def get_recipes_details(number_of_recipes, final_prediction):
         recipe_url = recipes["hits"][_]["recipe"]["url"]
 
         # List of ingredients and relative quantity
-        list_ingredients = {}
-        for ingredients in range(0, len(recipes["hits"][_]["recipe"]["ingredients"])):
-            list_ingredients[recipes["hits"][_]["recipe"]["ingredients"][ingredients]["text"]] = recipes["hits"][_]["recipe"]["ingredients"][ingredients]["quantity"]
+        list_ingredients = []
+        for recipe in recipes["hits"]:
+            ingredients = [item["text"] for item in recipe["recipe"]["ingredients"]]
+            list_ingredients.append(ingredients)
 
         # Type of diet
         recipe_type_diet = recipes["hits"][_]["recipe"]["healthLabels"][:3]
@@ -77,10 +78,10 @@ def get_recipes_details(number_of_recipes, final_prediction):
         # Append recipe details to the list
         recipe_details = {
             "Recipe Name": recipe_name,
-            "Recipe URL": recipe_url,
             "Ingredients": list_ingredients,
             "Diet Type": recipe_type_diet,
-            "Calories": recipe_calories
+            "Calories": recipe_calories,
+            "Recipe URL": recipe_url
         }
         recipe_list.append(recipe_details)
 
