@@ -19,54 +19,55 @@ def load_model_Inception():
     model = InceptionV3(weights="imagenet", include_top=False, input_shape=(224,224, 3))
     model.trainable = False
 
+    print("✅ Inception loaded")
+
     return model
 
-def add_last_layers():
+def initialize_model():
     '''Take a pre-trained model, set its parameters as non-trainable, and add additional trainable layers on top'''
-    resize_and_rescale = tf.keras.Sequential([
-        layers.Rescaling(1./255)])
 
-    data_augmentation = tf.keras.Sequential([
-    layers.RandomFlip("horizontal_and_vertical"),
-    layers.RandomRotation(0.2),
-    ])
+    print("✅Initializing the model")
 
-    base_model = load_model_Inception()
-    flattening_layer = layers.Flatten()
-    dense_layer = layers.Dense(128, activation='relu')
-    dense_layer_2 = layers.Dense(64, activation='relu')
+    i = tf.keras.layers.Input([None, None, 3], dtype = tf.uint8)
+    x = tf.cast(i, tf.float32)
+    x = tf.keras.applications.inception_v3.preprocess_input(x, data_format=None)
+    core = load_model_Inception()
+
+    x = tf.keras.layers.RandomFlip("horizontal_and_vertical")(x)
+    x = tf.keras.layers.RandomRotation(0.2)(x)
+
+    x = core(x)
+
+    x = layers.Flatten()(x)
+    x = layers.Dense(128, activation='relu')(x)
+    x = layers.Dense(64, activation='relu')(x)
     reg_l2 = regularizers.L2(0.01)
-    dense_layer_reg = layers.Dense(128, activation='relu', bias_regularizer=reg_l2)
-    maxpool_layer = layers.MaxPool2D(pool_size=(2,2))
-    prediction_layer = layers.Dense(15, activation='softmax')
+    x = layers.Dense(128, activation='relu', bias_regularizer=reg_l2)(x)
+    x = layers.Dense(12, activation='softmax')(x)
 
-    model = models.Sequential([
-        resize_and_rescale,
-        data_augmentation,
-        base_model,
-        flattening_layer,
-        dense_layer,
-        dense_layer_reg,
-        dense_layer_2,
-        prediction_layer
-        ])
+    model = tf.keras.Model(inputs=[i], outputs=[x])
 
+    print("✅ Model initiated")
 
     opt = optimizers.Adam(learning_rate=1e-3)
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt,
                   metrics=['accuracy'])
+
+    print("✅ Model compiled")
+
     return model
 
 
 def get_trained():
-    model = add_last_layers()
+    model = initialize_model()
 
     es = callbacks.EarlyStopping(patience=1, restore_best_weights=True)
 
     model.fit(train_data, batch_size=32, epochs=10, validation_data=val_data, callbacks=[es])
 
     print("Model trained ✅")
+
     return model
 
 
