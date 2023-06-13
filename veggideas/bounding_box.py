@@ -3,13 +3,19 @@ import selectivesearch
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import selectivesearch
+import numpy as np
+from veggideas.registry import load_model
 
 
-def draw_bboxes():
-    image_path = '/Users/arthurdercq/Desktop/eggplants.jpeg'
+im_path = '/Users/arthurdercq/Desktop/capsicums.jpeg'
 
-    # Load the image
+def load_image(img_path):
+# Load the image
+    image_path = img_path
     image = cv2.imread(image_path)
+    return image
+
+def create_bounding_boxes(image):
 
     # Perform selective search to generate candidate regions
     selective_search_results = selectivesearch.selective_search(image, scale=750, sigma=0.9, min_size=100)
@@ -17,7 +23,7 @@ def draw_bboxes():
     minimum_bounding_box_size = 100
     maximum_aspect_ratio = 3
     # Calculate target aspect ratio range (adjust as per your requirement)
-    target_aspect_ratio = 0.30
+    target_aspect_ratio = 1
     aspect_ratio_range = 0.30
 
     selected_candidates = []
@@ -64,7 +70,7 @@ def draw_bboxes():
             if i != j:
                 other_box = selected_candidates[j]['rect']
                 coverage_ratio, current_area, other_area = calculate_coverage_ratio(current_box, other_box)
-                if coverage_ratio >= 0.99:
+                if coverage_ratio >= 1:
                     # The current box is contained within another box
                     is_contained = True
                     if current_area >= other_area:
@@ -80,17 +86,65 @@ def draw_bboxes():
     filtered_list = list(unique_tuples)
 
     list_subimages =[]
-    # Itérer sur les coordonnées filtrées
+
+    # iterate over filtered coordinates
     for coords in filtered_list:
 
         x, y, w, h = coords
 
-        # Extraire l'image à partir des coordonnées
-        cropped_image = image[y:y+h, x:x+w]
-
-        list_subimages.append(cropped_image)
+        #Put it in the right format for the model
+        cropped_image = coords[y:y+h, x:x+w]
+        resized_image = cv2.resize(cropped_image, (224, 224))
+        final_image = np.expand_dims(resized_image, axis=0)
+        list_subimages.append(final_image)
 
     return list_subimages
 
+    # # # Create a figure and axes
+    # fig, ax = plt.subplots()
+
+    # # Plot the image
+    # ax.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+    # rect = []
+    # for i, box in enumerate(filtered_list):
+    #     x, y, w, h = box
+    #     rect.append(patches.Rectangle((x, y), w, h, edgecolor='green', facecolor='none', linewidth=2))
+    #     ax.add_patch(rect[i])
+
+    #     aspect_ratio = max(w / h, h / w)
+    #     ax.text(x, y, f'Box{i}: {round((aspect_ratio - target_aspect_ratio) * 100, 2)}%', color='green')
+
+    # # # Show the figure
+    # plt.show()
+
+def predict_bboxes(subimages_list):
+
+    vegg_list = ['Bean', 'Bitter_Gourd', 'Bottle_Gourd', 'Brinjal', 'Broccoli',
+                'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Cucumber',
+                'Papaya', 'Potato', 'Pumpkin', 'Radish', 'Tomato']
+
+    model = load_model()
+
+    predictions = []
+
+    for image in subimages_list:
+        prediction = model.predict(image)
+
+        pred_class = np.argmax(prediction, axis=-1)[0]
+
+        final_prediction = vegg_list[pred_class].lower()
+
+        predictions.append(final_prediction)
+
+    return predictions
+
+
+
 if __name__ == '__main__':
-    su_images = draw_bboxes()
+
+    image = load_image(im_path)
+
+    subimages = create_bounding_boxes(image)
+
+    final_predictions = predict_bboxes(subimages)
