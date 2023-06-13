@@ -52,8 +52,3 @@ async def receive_image(img: UploadFile=File(...)):
 
     df = get_recipes_details(10, final_prediction)
     return df
-
-
-
-def get_predicted_vegetable(prediction):
-    return "carrot"
