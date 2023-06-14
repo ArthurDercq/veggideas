@@ -53,9 +53,7 @@ def get_recipes_details(number_of_recipes, final_prediction):
     for _ in range(0, number_of_recipes):
         # Name of the recipe
         url = recipes["hits"][_]["recipe"]["url"]
-        recipe_name = url.split("/")[-1]
-        recipe_name = re.sub(r'\d+-', '', recipe_name)  # Remove digits and dashes
-        recipe_name = recipe_name.replace('-', ' ').capitalize()  # Capitalize words
+        recipe_name = recipes['hits'][_]['recipe']['label']
 
         if not recipe_name:  # Skip recipes without a name
             continue
