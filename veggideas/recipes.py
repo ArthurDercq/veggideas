@@ -16,7 +16,7 @@ def make_requests(url):
     return data
 
 def get_recipes(vegetable_type):
-    URL = f"https://api.edamam.com/api/recipes/v2?type=public&q={vegetable_type}&app_id={APP_ID}&app_key={API_KEY}&diet={DIET}&calories={CALORIES}&field=url&field=dietLabels&field=healthLabels&field=ingredients&field=calories&field=cuisineType&field=mealType"
+    URL = f"https://api.edamam.com/api/recipes/v2?type=public&q={vegetable_type}&app_id={APP_ID}&app_key={API_KEY}&diet={DIET}&calories={CALORIES}&field=url&field=dietLabels&field=healthLabels&field=ingredients&field=calories&field=cuisineType&field=mealType&field=totalTime"
 
     recipes = make_requests(URL)
     return recipes
@@ -75,13 +75,17 @@ def get_recipes_details(number_of_recipes, final_prediction):
         # Calories of the recipe
         recipe_calories = round(recipes["hits"][_]["recipe"]["calories"])
 
+        recipe_time = recipes["hits"][_]["recipe"]["totalTime"]
+
         # Append recipe details to the list
         recipe_details = {
             "Recipe Name": recipe_name,
             "Ingredients": list_ingredients,
             "Diet Type": recipe_type_diet,
             "Calories": recipe_calories,
+            "Time": recipe_time,
             "Recipe URL": recipe_url
+
         }
         recipe_list.append(recipe_details)
 
