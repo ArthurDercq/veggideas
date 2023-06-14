@@ -19,14 +19,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.state.model= load_model()
+app.state.model = load_model()
+print("Model loaded")
 
 @app.get("/")
 def root():
-    # $CHA_BEGIN
 
     return dict(greeting="Hello")
-    # $CHA_END
+
 
 @app.post('/predict')
 async def receive_image(img: UploadFile=File(...)):
@@ -37,10 +37,13 @@ async def receive_image(img: UploadFile=File(...)):
 
     ### Receiving and decoding the image
     contents = await img.read()
-
     nparr = np.fromstring(contents, np.uint8)
     cv2_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # type(cv2_img) => numpy.ndarray
+    cv2_img = tf.image.resize(cv2_img, (224,224))
     cv2_img = np.expand_dims(cv2_img, axis=0)
+
+
+
     prediction = app.state.model.predict(cv2_img)
     preds_classes = np.argmax(prediction, axis=-1)[0]
     #LABELS
