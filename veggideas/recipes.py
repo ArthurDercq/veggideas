@@ -16,7 +16,7 @@ def make_requests(url):
     return data
 
 def get_recipes(vegetable_type):
-    URL = f"https://api.edamam.com/api/recipes/v2?type=public&q={vegetable_type}&app_id={APP_ID}&app_key={API_KEY}&diet={DIET}&calories={CALORIES}&field=url&field=dietLabels&field=healthLabels&field=ingredients&field=calories&field=cuisineType&field=mealType&field=totalTime"
+    URL = f"https://api.edamam.com/api/recipes/v2?type=public&q={vegetable_type}&app_id={APP_ID}&app_key={API_KEY}&diet={DIET}&calories={CALORIES}&field=label&field=url&field=dietLabels&field=healthLabels&field=ingredients&field=calories&field=cuisineType&field=mealType&field=totalTime"
 
     recipes = make_requests(URL)
     return recipes
