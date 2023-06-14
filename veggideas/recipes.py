@@ -64,10 +64,8 @@ def get_recipes_details(number_of_recipes, final_prediction):
         recipe_url = recipes["hits"][_]["recipe"]["url"]
 
         # List of ingredients and relative quantity
-        list_ingredients = []
-        for recipe in recipes["hits"]:
-            ingredients = [item["text"] for item in recipe["recipe"]["ingredients"]]
-            list_ingredients.append(ingredients)
+        list_ingredients = [item["text"] for item in recipes["hits"][_]["recipe"]["ingredients"]]
+
 
         # Type of diet
         recipe_type_diet = recipes["hits"][_]["recipe"]["healthLabels"][:3]
@@ -75,7 +73,10 @@ def get_recipes_details(number_of_recipes, final_prediction):
         # Calories of the recipe
         recipe_calories = round(recipes["hits"][_]["recipe"]["calories"])
 
-        recipe_time = recipes["hits"][_]["recipe"]["totalTime"]
+        recipe_time = int(recipes["hits"][_]["recipe"]["totalTime"])
+
+        recipe_meal_type = [meal.capitalize() for meal in recipes["hits"][_]["recipe"]["mealType"][0].split("/")]
+        recipe_cuisine_type = recipes["hits"][_]["recipe"]["cuisineType"][0].capitalize()
 
         # Append recipe details to the list
         recipe_details = {
@@ -84,6 +85,8 @@ def get_recipes_details(number_of_recipes, final_prediction):
             "Diet Type": recipe_type_diet,
             "Calories": recipe_calories,
             "Time": recipe_time,
+            "Meal Type": recipe_meal_type,
+            "Cuisine": recipe_cuisine_type,
             "Recipe URL": recipe_url
 
         }
