@@ -46,12 +46,11 @@ async def receive_image(img: UploadFile=File(...)):
 
     prediction = app.state.model.predict(cv2_img)
     preds_classes = np.argmax(prediction, axis=-1)[0]
-    #LABELS
-
+    accuracy = round(np.max(prediction, axis=-1)[0]*100,4)
 
     final_prediction = vegg_list[preds_classes].lower()
 
     #vegetable_type = get_predicted_vegetable(prediction)
 
     df = get_recipes_details(10, final_prediction)
-    return final_prediction, df.to_dict()
+    return final_prediction, accuracy, df.to_dict()
